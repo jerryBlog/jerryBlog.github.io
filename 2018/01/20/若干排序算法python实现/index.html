@@ -123,7 +123,7 @@
 
 
 
-  <title>前端实现2048游戏 | Jerry's Blog</title>
+  <title>若干排序算法python实现 | Jerry's Blog</title>
   
 
 
@@ -294,7 +294,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/09/前端实现2048游戏/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/20/若干排序算法python实现/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Jerry">
@@ -311,7 +311,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">前端实现2048游戏</h1>
+          <h1 class="post-title" itemprop="name headline">若干排序算法python实现</h1>
         
 
         <div class="post-meta">
@@ -323,7 +323,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-06-09T00:00:00+08:00">2016-06-09</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-20T00:00:00+08:00">2018-01-20</time>
             
 
             
@@ -344,8 +344,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/前端/" itemprop="url" rel="index">
-                    <span itemprop="name">前端</span>
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
                   </a>
                 </span>
 
@@ -381,32 +381,26 @@
       
 
       
-        <p>这个小游戏写了大概有半年了吧，现在拿出来讲一讲。源码请看<a href="https:/github.com/caibingcheng/DIY2048" target="_blank">github仓库</a></p>
-<p>不过没有分离代码，就把所有代码都挤在一堆了…<br><a id="more"></a><br><a href="https:/caibingcheng.github.io/game" target="_blank">2048游戏链接</a></p>
-<p>先来分析分析2048的结构。之后再会讲到怎么用js代码实现。</p>
-<p>上图先<img src="/images/img/2048.png"><br>注意到有12个小方格用来容纳数字，小方格的样式容易写吧，就不赘述了。而且方格数目是不变的，那么这里直接用12个div容器也未尝不可。我的布局方式是大容器包含12个方格，中等的容器包含了一行的4个方格，这样写只是为了读取的时候方便一点。<br><br>贴一份标签吧：（贴标签有点麻烦，还是上图吧）<br><img src="/images/img/2048_12div.png"><br>之后就是操作按钮了（简单，就不说了），愿意的话可以尝试用js触控事件来写，这样就更接近移动端APP</p>
-<p>刚开始写的时候，布局并不是很熟练。又不想给每个放数字的容器都规定一个位置，实在是太麻烦re…如果把每行都放在一个容器里面，操作起来就简单多了（只需对行操作，行里面的元素加margin就行）。但是！！！我虽然是这样布局div的，之后看代码才发现，我竟然用js来定位，实在不符合“结构”“表示”“行为”分离这一原则。</p>
-<p>OK，布局就先到这了</p>
-<!-- 现在直入主题，看看怎么写2048的逻辑代码（减少废话产生的流量O__O"…） -->
-<hr>
-
-<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>注意到每次运行2048在16个方格中随机两个方格就会出现2或4。这里的随机用伪随机就可以了，取0~15两个不同的随机数（方格），再随机把2或4填入方格。(这个就不贴代码了)</p>
-<hr>
-
-<h2 id="移动逻辑"><a href="#移动逻辑" class="headerlink" title="移动逻辑"></a>移动逻辑</h2><p>下面是数字向左移动的一段代码，先移动，再计算，再移动</p>
-<p><pre><br>i=1;n=1;<br>var flag=Array(6);<br>for(n=1;n&lt;5;n++)<br>{<br>    cellValue=cell[n-1].firstChild.nodeValue;<br>    if(cellValue==” “){flag[i]=1;i++;}else{flag[i]=0;i++;};<br>    //对第一行，如果方格的内容为空，相关旗帜标记为1，否则为0<br>}<br>for(count=1;count&lt;15;count++)<br>    for(i=1;i&lt;5;i++)<br>    {<br>        if((flag[i]!=0)&amp;&amp;(flag[i+1]==0))<br>        //前一个方格内容为空后一个方格有内容，则将后一个方格数字移动到前一个，并清空后一个方格内容<br>        {<br>            cell[i-1].firstChild.nodeValue=cell[i].firstChild.nodeValue;<br>            cell[i].firstChild.nodeValue=” “;<br>            flag[i+1]=1;<br>            flag[i]=0;<br>        }<br>    }<br>for(m=1;m&lt;4;m++)<br>{<br>    if((cell[m-1].firstChild.nodeValue==cell[m].firstChild.nodeValue)&amp;&amp;(cell[m-1].firstChild.nodeValue!=” “)){cell[m-1].firstChild.nodeValue=cell[m-1].firstChild.nodeValue*2;cell[m].firstChild.nodeValue=” “;}<br>    //前后方格内容相同，则前一个方格内容值加倍，后一个方格清空，且保证所有相邻数字已相加<br>}<br>i=1;n=1;<br>//继续移动<br>var flag=Array(6);<br>for(n=1;n&lt;5;n++)<br>{<br>    cellValue=cell[n-1].firstChild.nodeValue;<br>    if(cellValue==” “){flag[i]=1;i++;}else{flag[i]=0;i++;};<br>}<br>for(count=1;count&lt;15;count++)<br>    for(i=1;i&lt;5;i++)<br>    {<br>        if((flag[i]!=0)&amp;&amp;(flag[i+1]==0))<br>            {<br>                cell[i-1].firstChild.nodeValue=cell[i].firstChild.nodeValue;<br>                cell[i].firstChild.nodeValue=” “;<br>                flag[i+1]=1;<br>                flag[i]=0;<br>            }<br>    }<br></pre><br>对每个方向的移动做成函数，在键盘控制或触摸控制中调用就好了。<br>因为代码没有做优化，所以又臭又长。每个方向的移动对每一行（列）应该都可以放在一个大循环里面。不过即使是解释性语言，对这一点计算量而言，执行起来还是很快的。另外，在每次数字移动的时候还可以加上动画，这样移动就不会显得这么难看。</p>
-<hr>
-
-<h2 id="生成新数"><a href="#生成新数" class="headerlink" title="生成新数"></a>生成新数</h2><p>每次移动后，都要在一个空方格内生成2或4。我们可以在移动完成后，遍历所有方格，找到内容为空的随机取一个方格再随机填2、4就好了。</p>
-<hr>
-
-<h2 id="输赢判断"><a href="#输赢判断" class="headerlink" title="输赢判断"></a>输赢判断</h2><p>遍历16个方格，2048是否出现，再看看有没有空格，相邻方格内容是否相同。这个还是比较好写的。</p>
-<hr>
-
-<h2 id="键值获取"><a href="#键值获取" class="headerlink" title="键值获取"></a>键值获取</h2><p><pre><br>window.onkeydown=function(e)<br>{<br>    e=e||window.event;<br>    var code=e.which||e.keycode;<br>    alert(code);<br>}<br></pre><br>看看alert出来的结果是什么就好了</p>
-<hr>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>初始化→→→获取键值→→→移动→→→输赢判断→→→生成新数</p>
+        <p>今天突然想到了一个问题：让你立即把堆排、快排等等排序算法写出来会不会，并且不能犯逻辑错误？</p>
+<p>我说：不会，至少需要思考一下，并且可能还需要时间调试。<br><a id="more"></a><br>之前总是觉得，不就是排序算法吗？有什么大不了的？网上、书上一查一大堆。但是换个角度想：1+1 = ? 你会不会？</p>
+<p>排序算法应是作为最基本的工具一样，是信手捏来的，所以我把《算法导论》上的几个排序问题看了并且实现了一遍；在此做分享：</p>
+<h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h2><p>冒泡排序应该算是比较简单并且使用广泛的排序算法之一了吧，但是它的效率并不怎么高，我们可以先看一下实现：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubbleSort</span><span class="params">(A)</span>:</span></span><br><span class="line">	length = len(A);</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, length):</span><br><span class="line">		<span class="keyword">for</span> j <span class="keyword">in</span> range(length - <span class="number">1</span>, i, <span class="number">-1</span>):</span><br><span class="line">			<span class="keyword">if</span> A[j] &lt; A[j - <span class="number">1</span>]:</span><br><span class="line">				(A[j], A[j - <span class="number">1</span>]) = (A[j - <span class="number">1</span>], A[j]);</span><br><span class="line">	<span class="keyword">return</span> A;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = [<span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">20</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">19</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">17</span>, <span class="number">16</span>, <span class="number">10</span>];</span><br><span class="line">a = bubbleSort(a);</span><br><span class="line">print(a);</span><br></pre></td></tr></table></figure></p>
+<p>顾名思义，冒泡排序就像泡沫一样一层一层往上冒，需要一个一个比较；<br>比较次数(n-1)<em>n / 2， 数据交换次数最坏情况3</em>(n-1)*n/2，最好情况0，所以其时间复杂度O(n^2)；</p>
+<h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insertionSort</span><span class="params">(A)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(A)):</span><br><span class="line">		key = A[i];</span><br><span class="line">		j = i - <span class="number">1</span>;</span><br><span class="line">		<span class="keyword">while</span> (j &gt;= <span class="number">0</span>) <span class="keyword">and</span> (A[j] &gt; key):</span><br><span class="line">			A[j + <span class="number">1</span>] = A[j];</span><br><span class="line">			j = j - <span class="number">1</span>;</span><br><span class="line">		A[j+<span class="number">1</span>] = key;</span><br><span class="line">	<span class="keyword">return</span> A;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = [<span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">20</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">19</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">17</span>, <span class="number">16</span>, <span class="number">10</span>];</span><br><span class="line">a = insertionSort(a);</span><br><span class="line">print(a);</span><br><span class="line">`</span><br></pre></td></tr></table></figure>
+<p>要理解插入排序，可以想象打扑克的时候是怎么拿牌的，我们摸一张牌，然后从左往右（或从右往左）按顺序比较，再把牌插入相应位置，插入排序就是这种思想。<br>时间复杂度O(n^2)</p>
+<h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><p>记得大二学习《数据结构》第一次写这个算法的时候想了好久，因为使用递归的思想，有些地方总是转不过弯来。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge</span><span class="params">(A)</span>:</span></span><br><span class="line">	length = len(A);</span><br><span class="line">	<span class="keyword">if</span> length &lt;= <span class="number">1</span> : <span class="keyword">return</span> A;</span><br><span class="line">	n1 = length / <span class="number">2</span>;</span><br><span class="line">	n2 = length - n1;</span><br><span class="line">	L = [];</span><br><span class="line">	R = [];</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, n1):</span><br><span class="line">		L.append(A[i]);</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, n2):</span><br><span class="line">		R.append(A[n1 + i]);</span><br><span class="line">	<span class="keyword">if</span> n1 &gt; <span class="number">1</span> : merge(L);</span><br><span class="line">	<span class="keyword">if</span> n2 &gt; <span class="number">1</span> : merge(R);</span><br><span class="line">	i = <span class="number">0</span>;</span><br><span class="line">	j = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="number">0</span>, length):</span><br><span class="line">		<span class="keyword">if</span> L[i] &lt; R[j]:</span><br><span class="line">			A[k] = L[i];</span><br><span class="line">			i = i + <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">if</span> i &gt;= n1:</span><br><span class="line">				<span class="keyword">for</span> i <span class="keyword">in</span> range(j, n2):</span><br><span class="line">					k = k + <span class="number">1</span>;</span><br><span class="line">					A[k] = R[i];</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">else</span>: </span><br><span class="line">			A[k] = R[j]</span><br><span class="line">			j = j + <span class="number">1</span>;</span><br><span class="line">			<span class="keyword">if</span> j &gt;= n2:</span><br><span class="line">				<span class="keyword">for</span> j <span class="keyword">in</span> range(i, n1):</span><br><span class="line">					k = k + <span class="number">1</span>;</span><br><span class="line">					A[k] = L[j];</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">return</span> A;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">a = [<span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">20</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">19</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">17</span>, <span class="number">16</span>, <span class="number">10</span>];</span><br><span class="line">a = merge(a);</span><br><span class="line">print(a);</span><br></pre></td></tr></table></figure></p>
+<p>如果你能很好的理解递归的思想的话，想必归并排序也是很简单的。其核心思想在于怎么把问题分解成一系列类型一样的小问题。我们可以这样想：<br>两个排好序的数列怎么合并成一个序列？</p>
+<p>两个序列的数据一个一个比较，将小的存入新的队列，直至这两个数列一个为空，则将另外一个数列剩余数据插入队列。如果你把这两个数列想象成扑克的话或许更好理解。如果这两个序列都只有一个数据的话，是不是会很简单的就排完了？</p>
+<p>[1, 3, 5], [2, 4, 6, 7]  ======&gt; [1, 2, 3, 4, 5, 6, 7]</p>
+<p>归并排序通过递归方法，最终将一个待排序序列换成若干组待排序的包含一个数据的数列。</p>
+<p>时间复杂度O(nlog(n))</p>
+<h2 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h2><p>曾经，第一次写堆排，用C链表，自信满满地构建了一颗二叉树！原来堆排序不需要构建一颗视觉上的二叉树！！！运用原址排序（只操作下标和对应的元素）解决！！！<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">parent = <span class="keyword">lambda</span> i : (i -  <span class="number">1</span>) / <span class="number">2</span>;</span><br><span class="line">left = <span class="keyword">lambda</span> i : <span class="number">2</span> * i + <span class="number">1</span>;</span><br><span class="line">right = <span class="keyword">lambda</span> i : <span class="number">2</span> * i + <span class="number">2</span>;</span><br><span class="line">exchange = <span class="keyword">lambda</span> a, b : (b, a);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">maxHeapfy</span><span class="params">(A, i, length)</span>:</span></span><br><span class="line">	l = left(i);</span><br><span class="line">	r = right(i);</span><br><span class="line">	<span class="keyword">if</span> l &lt; length <span class="keyword">and</span> A[l] &gt; A[i]:</span><br><span class="line">		large = l;</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		large = i;</span><br><span class="line">	<span class="keyword">if</span> r &lt; length <span class="keyword">and</span> A[r] &gt; A[large]:</span><br><span class="line">		large = r;</span><br><span class="line">	<span class="keyword">if</span> large != i:</span><br><span class="line">		(A[i], A[large]) = exchange(A[i], A[large]);</span><br><span class="line">		maxHeapfy(A, large, length);</span><br><span class="line">	<span class="keyword">return</span> A;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">buildHeap</span><span class="params">(A, length)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(length / <span class="number">2</span> - <span class="number">1</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">		maxHeapfy(A, i, length);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">heapSort</span><span class="params">(A)</span>:</span></span><br><span class="line">	length = len(A);</span><br><span class="line">	buildHeap(A, length);</span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> range(len(A) - <span class="number">1</span>, <span class="number">0</span>, <span class="number">-1</span>):</span><br><span class="line">		(A[<span class="number">0</span>], A[i]) = exchange(A[<span class="number">0</span>], A[i]);</span><br><span class="line">		length = length - <span class="number">1</span>;</span><br><span class="line">		maxHeapfy(A, <span class="number">0</span>, length);</span><br><span class="line">	<span class="keyword">return</span> A;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">a = [<span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">20</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">19</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">17</span>, <span class="number">16</span>, <span class="number">10</span>];</span><br><span class="line">a = heapSort(a);</span><br><span class="line">print(a);</span><br></pre></td></tr></table></figure></p>
+<p>堆排的思想在于理解最大（小）堆的概念：对于一个二叉树，父节点总是不小（大）于子节点的，即<br>A[parent(i)] &gt;= A[i] ……①</p>
+<p>后面便于称述不过于冗余，只讨论最大堆。</p>
+<p>所以堆排的第一目的是建立一个满足条件的最大堆，要建立最大堆，就需要有最大堆的判定条件，即①式。建立最大堆之后，将根节点找到、保存并剔除、对剩下的序列继续做最大堆，重复上述过程即可完成排序。</p>
+<p>时间复杂度O(nlog(n))</p>
+<h2 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h2><p>注意也是原址排序！！！<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(A, p, r)</span>:</span></span><br><span class="line">	x = A[r];</span><br><span class="line">	i = p - <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> range(p, r):</span><br><span class="line">		<span class="keyword">if</span> A[j] &lt;= x:</span><br><span class="line">			i = i + <span class="number">1</span>;</span><br><span class="line">			(A[i], A[j]) = (A[j], A[i]);</span><br><span class="line">	(A[i + <span class="number">1</span>], A[r]) = (A[r], A[i + <span class="number">1</span>]);</span><br><span class="line">	<span class="keyword">return</span> i + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quickSort</span><span class="params">(A, p, r)</span>:</span></span><br><span class="line">	<span class="keyword">if</span> p &lt; r:</span><br><span class="line">		q = partition(A, p, r);</span><br><span class="line">		quickSort(A, p, q - <span class="number">1</span>);</span><br><span class="line">		quickSort(A, q + <span class="number">1</span>, r);</span><br><span class="line">	<span class="keyword">return</span> A;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = [<span class="number">5</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">9</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">18</span>, <span class="number">20</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">19</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">17</span>, <span class="number">16</span>, <span class="number">10</span>];</span><br><span class="line">a = quickSort(a, <span class="number">0</span>, len(a) - <span class="number">1</span>);</span><br><span class="line">print(a);</span><br></pre></td></tr></table></figure></p>
+<p>快排的思想在于将序列分成三部分A[0,i-1],A[i],A[i+1,n]，并且满足条件A[0, i-1]中所有元素小于等于A[i]，A[i+1,n]中所有元素大于等于A[i]。同样可以使用递归的方法实现。不理解的可以参考归并排序。<br>时间复杂度O(nlog(n))</p>
 
       
     </div>
@@ -424,11 +418,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/游戏/" rel="tag"># 游戏</a>
+            <a href="/tags/python/" rel="tag"># python</a>
           
-            <a href="/tags/前端/" rel="tag"># 前端</a>
-          
-            <a href="/tags/2048/" rel="tag"># 2048</a>
+            <a href="/tags/排序/" rel="tag"># 排序</a>
           
         </div>
       
@@ -441,15 +433,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/12/17/h5记忆力小游戏/" rel="next" title="h5记忆力小游戏">
+                <i class="fa fa-chevron-left"></i> h5记忆力小游戏
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/15/暑期社会纪实/" rel="prev" title="暑期社会纪实">
-                暑期社会纪实 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -585,7 +577,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化"><span class="nav-number">1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#移动逻辑"><span class="nav-number">2.</span> <span class="nav-text">移动逻辑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成新数"><span class="nav-number">3.</span> <span class="nav-text">生成新数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#输赢判断"><span class="nav-number">4.</span> <span class="nav-text">输赢判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#键值获取"><span class="nav-number">5.</span> <span class="nav-text">键值获取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#冒泡排序"><span class="nav-number">1.</span> <span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入排序"><span class="nav-number">2.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#归并排序"><span class="nav-number">3.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆排序"><span class="nav-number">4.</span> <span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速排序"><span class="nav-number">5.</span> <span class="nav-text">快速排序</span></a></li></ol></div>
             
 
           </div>
